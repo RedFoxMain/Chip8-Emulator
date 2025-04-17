@@ -2,6 +2,7 @@
 #define CPU_H
 
 #define START_ADDRESS 0x200
+#define FONT_ADDRESS 0x100
 #define MEMORY_SIZE 4096
 #define DISPLAY_WIDTH 64
 #define DISPLAY_HEIGHT 32
@@ -10,6 +11,7 @@
 #define KEYS_COUNT 16
 #define FONT_SIZE 80
 
+#include <stdio.h>
 #include <stdint.h>
 #include "SDL.h"
 
@@ -46,8 +48,12 @@ typedef struct {
 	uint16_t pc;
 	uint16_t spt;
 	uint16_t I;
+	uint8_t sound_timer;
+	uint8_t delay_timer;
 } cpu_t;
 
-void initCPU(cpu_t* cpu);
-
+uint8_t* readFromFile(const char* file_name, size_t* size);
+void createCPU(cpu_t* cpu);
+void loadProgram(cpu_t* cpu, uint8_t* program, size_t size);
+void execute(cpu_t* cpu);
 #endif // !CPU_H
