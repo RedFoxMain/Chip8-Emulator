@@ -20,19 +20,30 @@ uint8_t* readFromFile(const char* file_name, size_t* size) {
 
 void createCPU(cpu_t* cpu) {
 	memset(cpu, 0, sizeof(cpu_t));
-	cpu->pc = START_ADDRESS;
-	cpu->spt = -1;
+	memset(&cpu->memory[0], font, sizeof(font));
+	cpu->pc = 0x200;
+	cpu->spt = 0;
 }
 
 void loadProgram(cpu_t* cpu, uint8_t* program, size_t size) {
-	memcpy(cpu->memory + FONT_ADDRESS, program, size);
+	memcpy(cpu->memory + START_ADDRESS, program, size);
 }
 
 void execute(cpu_t* cpu) {
-	uint16_t instruction = cpu->memory[cpu->pc];
-	uint16_t oper = (instruction << 8) & 0xF000;
-	switch (oper) {
-		default:
+	getInstr(cpu);
+	switch ((cpu->instr.op_code >> 12) & 0x0F) {
+		case 0x02:
+			printf("Instr 2\n");
 			break;
 	}
+}
+
+void getInstr(cpu_t* cpu) {
+	cpu->instr.op_code = (cpu->memory[cpu->pc] << 8) | cpu->memory[cpu->pc + 1];
+	cpu->pc += 2;
+	cpu->instr.nnn = cpu->instr.op_code & 0x0FFF;
+	cpu->instr.nn = cpu->instr.op_code & 0x0FF;
+	cpu->instr.n = cpu->instr.op_code & 0x0F;
+	cpu->instr.x = (cpu->instr.op_code >> 8) & 0x0F;
+	cpu->instr.y = (cpu->instr.op_code >> 4) & 0x0F;
 }

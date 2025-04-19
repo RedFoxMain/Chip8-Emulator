@@ -2,7 +2,6 @@
 #define CPU_H
 
 #define START_ADDRESS 0x200
-#define FONT_ADDRESS 0x100
 #define MEMORY_SIZE 4096
 #define DISPLAY_WIDTH 64
 #define DISPLAY_HEIGHT 32
@@ -42,9 +41,19 @@ static const uint8_t font[FONT_SIZE] = {
 };
 
 typedef struct {
+	uint16_t op_code;
+	uint16_t nnn;
+	uint8_t nn;
+	uint8_t n;
+	uint8_t x;
+	uint8_t y;
+} instruction_t;
+
+typedef struct {
 	uint16_t memory[MEMORY_SIZE];
 	uint16_t stack[STACK_DEPTH];
 	uint8_t registers[REGISTER_COUNT];
+	instruction_t instr;
 	uint16_t pc;
 	uint16_t spt;
 	uint16_t I;
@@ -56,4 +65,5 @@ uint8_t* readFromFile(const char* file_name, size_t* size);
 void createCPU(cpu_t* cpu);
 void loadProgram(cpu_t* cpu, uint8_t* program, size_t size);
 void execute(cpu_t* cpu);
+void getInstr(cpu_t* cpu);
 #endif // !CPU_H
